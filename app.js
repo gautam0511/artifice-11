@@ -31,7 +31,7 @@ const fileFilter= (req,file,cb)=>{
 app.use(multer({storage:fileStorage,fileFilter:fileFilter}).single('image'))
 const userRoutes =  require('./routes/user');
 const productRoutes = require('./routes/product');
-
+const cartRoutes = require('./routes/cart');
 
 app.use((error,req,res,next)=>{
     const status = error.statusCode;
@@ -41,6 +41,7 @@ app.use((error,req,res,next)=>{
 
 app.use('/user',userRoutes);
 app.use(productRoutes);
+app.use(cartRoutes);
 mongoose
 .connect('mongodb+srv://artifice11:artifice117@cluster0.m03pu.mongodb.net/ClientsDetails?retryWrites=true&w=majority')
 .then(result=>{

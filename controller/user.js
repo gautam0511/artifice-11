@@ -62,7 +62,7 @@ exports.postsignup = async (req, res, next) => {
             'artific11secretcode',
             { expiresIn: '1hr' }
         )
-
+        user.token.push(token)
         const resultUsers = await user.save()
         res.status(201).json({ token: token, message: 'Created', user: resultUsers })
     }
