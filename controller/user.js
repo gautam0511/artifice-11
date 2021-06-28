@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 
 
 
-
 exports.getsignup = async (req, res, next) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -101,6 +100,8 @@ exports.getlogin = async (req, res, next) => {
 exports.postLogin = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
+   
+    
     try {
 
         if(email === 'artifice117@gmail.com' && password ==='artifice11' ){
@@ -113,6 +114,7 @@ exports.postLogin = async (req, res, next) => {
                 error.statusCode = 422
                 throw error;
             }
+           
             const result = await bcrypt.compare(password,user.password)
             if(result){
                 res.status(200).json({message:'welcome user'})
@@ -120,31 +122,7 @@ exports.postLogin = async (req, res, next) => {
             else{
                 res.status(401).json({message:'not exist'})
             }
-        }
-        
-            
-        
-        
-            // const adminuser = await User.findOne({ email: 'artifice117@gmail.com' })
-            // if (adminuser) {
-            //     const result = await bcrypt.compare(password, adminuser.password)
-            //     if (result) {
-            //         res.status(200).json({ message: 'Welcome Admin', adminuser: adminuser })
-            //     }
-            //     else {
-            //         res.status(401).json({ message: 'sorry invalid details' })
-            //     }
-            // }
-            // if(!adminuser){
-            //     const user = await User.findOne({ email: email })
-            //      const result = await bcrypt.compare(password, user.password)
-            //      if (result) {
-            //          res.status(200).json({ message: 'Authenticated', user: user })
-            //      }
-            //      else {
-            //          res.status(401).json({ message: 'not authenticated' })
-            //      }
-            // }
+        }           
     }
     catch (err) {
         if (!err.statusCode) {
@@ -153,36 +131,4 @@ exports.postLogin = async (req, res, next) => {
         next();
     }
 }
-// exports.putedit = async (req, res, next) => {
-//     const userId = req.params.userId;
 
-//     const updatedemail = req.body.email;
-//     const updatedname = req.body.name;
-//     const updatedphone = req.body.phone;
-//     const updatedstate = req.body.state;
-//     const updatedcity = req.body.city;
-//     const updatedaddress = req.body.address;
-//     const updatedpassword = req.body.password;
-//     const updatedzip = req.body.zip;
-//     try{
-//         const user = await User.findById(userId)
-//         user.email = updatedemail;
-//         user.name = updatedname;
-//         user.phone = updatedphone;
-//         user.password = updatedpassword;
-//         user.state = updatedstate;
-//         user.city = updatedcity;
-//         user.address = updatedaddress;
-//         user.zip = updatedzip;
-//         const result = await user.save()
-//        res.status(200).json({message:'updated',user:result});
-//     }
-//     catch (err) {
-//         if (!err.statusCode) {
-//             err.statusCode = 500;
-//         }
-//         next();
-//     }
-// }
-
-//
