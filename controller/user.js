@@ -53,17 +53,8 @@ exports.postsignup = async (req, res, next) => {
             state: state,
             zip: zip
         })
-        member = user;
-        const token = jwt.sign({
-            email: member.email,
-            userId: member._id.toString()
-        },
-            'artific11secretcode',
-            { expiresIn: '1hr' }
-        )
-        user.token.push(token)
         const resultUsers = await user.save()
-        res.status(201).json({ token: token, message: 'Created', user: resultUsers })
+        res.status(201).json({message: 'Created', user: resultUsers })
     }
     catch (err) {
         if (!err.statusCode) {
@@ -105,6 +96,7 @@ exports.postLogin = async (req, res, next) => {
     try {
 
         if(email === 'artifice117@gmail.com' && password ==='artifice11' ){
+            
             res.json({message:'hello admin'})
         }
         else{
@@ -114,7 +106,14 @@ exports.postLogin = async (req, res, next) => {
                 error.statusCode = 422
                 throw error;
             }
-           
+            const token = jwt.sign({
+                email:user.email,
+                userId :user._id
+            },
+            'resetpasswordsecretpasswordartifice11',
+            {expiresIn:'30 min'}
+            )
+            user.token.push(token)
             const result = await bcrypt.compare(password,user.password)
             if(result){
                 res.status(200).json({message:'welcome user'})
@@ -132,3 +131,43 @@ exports.postLogin = async (req, res, next) => {
     }
 }
 
+exports.emailverification = async(req,res,next)=>{
+    
+    try{
+        
+       
+        res.status(200).json({message:'token creted',user:user});
+    }
+    catch(err){
+        if(!err.statusCode){
+            err.statusCode = 500;
+        }
+        next();
+    }
+
+}
+
+exports.resetpassword = async(req,res,next)=>{
+    const tokenId = req.params.token;
+    const email = req.body.email;
+    const newpassword = req.body.newpassword;
+    
+    try{
+        const user = await User.findOne({email:email})
+        console.log(user)
+        if(user.token === tokenId){
+            console.log(user.token);
+        }
+        const hashedpassword = await bcrypt.hash(newpassword,12)
+        user.password = hashedpassword;
+        const result = await user.save()
+        res.status(200).json({message:'updated',result})
+    }
+    catch(err){
+        if(!err.statusCode){
+            err.statusCode = 500
+        }
+        next();
+    }
+
+}

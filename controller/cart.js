@@ -41,6 +41,36 @@ exports.removeCart = async (req, res, next) => {
         next();
     }
 }
-exports.postOrder = (req, res, next) => {
-   
+exports.postOrder = async (req, res, next) => {
+    const name  =  req.body.name;
+    try{
+        const user = await User.findOne({name:name})
+       
+        const users = await user.populate('cart.items.productId').execPopulate()
+        
+        const products = await users.cart.items.map(i=>{
+            return {
+                quantity:i.quantity,
+                product:{...i.productId._doc}
+            }
+           
+        })
+        console.log( products)
+         const order = new Order ({
+             user:{
+                 email:users.email,
+                 userId:users._id
+             },
+             products:products
+         })
+        const result = await order.save()
+        //clearcart
+        res.status(200).json({message:'order',order:result})
+    }
+    catch(err){
+        if(!err.statusCode){
+            err.statusCode = 500;
+        }
+        next()
+    }
 }

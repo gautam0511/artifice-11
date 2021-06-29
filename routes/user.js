@@ -11,5 +11,7 @@ router.post('/signup',[
 ],userController.postsignup);
 router.post('/login',userController.postLogin);
 router.get('/login',userController.getlogin);
+router.post('/reset',userController.emailverification);
+router.post('/reset/:token',userController.resetpassword);
 
 module.exports = router;
