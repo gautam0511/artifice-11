@@ -53,6 +53,14 @@ exports.postsignup = async (req, res, next) => {
             state: state,
             zip: zip
         })
+        const token = jwt.sign({
+            email:user.email,
+            userId :user._id
+        },
+        'resetpasswordsecretpasswordartifice11',
+        {expiresIn:'30 min'}
+        )
+        user.token.push(token)
         const resultUsers = await user.save()
         res.status(201).json({message: 'Created', user: resultUsers })
     }
@@ -106,14 +114,7 @@ exports.postLogin = async (req, res, next) => {
                 error.statusCode = 422
                 throw error;
             }
-            const token = jwt.sign({
-                email:user.email,
-                userId :user._id
-            },
-            'resetpasswordsecretpasswordartifice11',
-            {expiresIn:'30 min'}
-            )
-            user.token.push(token)
+            
             const result = await bcrypt.compare(password,user.password)
             if(result){
                 res.status(200).json({message:'welcome user'})
@@ -131,21 +132,7 @@ exports.postLogin = async (req, res, next) => {
     }
 }
 
-exports.emailverification = async(req,res,next)=>{
-    
-    try{
-        
-       
-        res.status(200).json({message:'token creted',user:user});
-    }
-    catch(err){
-        if(!err.statusCode){
-            err.statusCode = 500;
-        }
-        next();
-    }
 
-}
 
 exports.resetpassword = async(req,res,next)=>{
     const tokenId = req.params.token;
@@ -154,14 +141,14 @@ exports.resetpassword = async(req,res,next)=>{
     
     try{
         const user = await User.findOne({email:email})
-        console.log(user)
-        if(user.token === tokenId){
-            console.log(user.token);
-        }
-        const hashedpassword = await bcrypt.hash(newpassword,12)
+        
+        if(user.token.toString() === tokenId.toString()){
+            const hashedpassword = await bcrypt.hash(newpassword,12)
         user.password = hashedpassword;
         const result = await user.save()
-        res.status(200).json({message:'updated',result})
+        res.status(200).json({message:'updated'})
+        }
+        
     }
     catch(err){
         if(!err.statusCode){
