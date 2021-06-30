@@ -58,7 +58,23 @@ const userSchema = new Schema({
             }
 
         ]
+    },
+    wishlist: {
+        items: [
+            {
+                productId: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Product'
+                },
+                quantity: {
+                    type: Number,
+                    required: true
+                }
+            }
+
+        ]
     }
+    
 
 })
 
@@ -92,15 +108,46 @@ userSchema.methods.addToCart = function(product) {
   };
 
   userSchema.methods.removeFromCart = function(productId){
+     
       const updatedCartItems = this.cart.items.filter(item=>{
-          return item.productId !== productId
+          return item.productId.toString() !== productId.toString()
       })
+
       this.cart.items = updatedCartItems;
+    
       return this.save();
   }
-// after purchasing all things present in a cart clear cart willb called
-  userSchema.methods.clearCart = function(){
-    this.cart.items = { items:[] };
-    return this.save();
-  }
+
+
+userSchema.methods.addToWishlist = function(product){
+    const wishlistProductIndex = this.wishlist.items.findIndex(wp=>{
+        return wp.productId.toString() === product._id.toString()
+    })
+
+    let newQuantity = 1;
+    const updatedWishlistItems = [...this.wishlist.items];
+
+    if(wishlistProductIndex >=0){
+        newQuantity = this.wishlist.items[wishlistProductIndex].quantity + 1;
+        updatedWishlistItems[wishlistProductIndex].quantity = newQuantity;
+    }
+    else{
+        updatedWishlistItems.push({
+            productId: product._id,
+            quantity:newQuantity
+        })
+    }
+    const updatedWishlist = {
+        items:updatedWishlistItems
+    }
+    this.wishlist = updatedWishlist
+    return this.save()
+}
+userSchema.methods.removeWishlist = function(productId){
+    const updatedWishlistItems = this.wishlist.items.filter(item=>{
+        return item.productId.toString() !== productId.toString()
+    })
+  this.wishlist.items = updatedWishlistItems;
+  return this.save()
+}
 module.exports = mongoose.model('User', userSchema);
