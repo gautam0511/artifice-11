@@ -1,4 +1,5 @@
 const http = require('http');
+require('dotenv').config()
 const path = require('path');
 const express = require('express');
 const app = express();
@@ -7,6 +8,7 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const {v4:uuidv4} = require('uuid');
 app.use(bodyParser.json())
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.igetc.mongodb.net/${process.env.MONGO_DATABASE}?retryWrites=true&w=majority`
 
 app.use('/images',express.static(path.join(__dirname,'images')));
 
@@ -28,6 +30,7 @@ const fileFilter= (req,file,cb)=>{
     }
 
 }
+
 app.use(multer({storage:fileStorage,fileFilter:fileFilter}).single('image'))
 const userRoutes =  require('./routes/user');
 const productRoutes = require('./routes/product');
@@ -43,7 +46,7 @@ app.use('/user',userRoutes);
 app.use(productRoutes);
 app.use(cartRoutes);
 mongoose
-.connect('mongodb+srv://artifice11:artifice117@cluster0.m03pu.mongodb.net/ClientsDetails?retryWrites=true&w=majority')
+.connect(MONGODB_URI)
 .then(result=>{
     app.listen(1105);
 })

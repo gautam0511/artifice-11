@@ -104,7 +104,7 @@ exports.postLogin = async (req, res, next) => {
     try {
         
        
-            if(email === 'artifice7@gmail.com' && password ==='artifice' ){
+            if(email ===`${process.env.ADMIN_EMAIL}` && password ===`${process.env.ADMIN_PASSWORD}` ){
             
                 res.json({message:'hello admin'})
             }
