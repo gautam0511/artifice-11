@@ -8,10 +8,11 @@ const Order = require('../models/order');
 
 exports.postCart = async (req, res, next) => {
     const productId = req.params.productId;
-    const name = req.body.name;
+   const userId = req.params.userId;
+   console.log(userId);
     try {
         const product = await Product.findById(productId)
-        const user = await User.findOne({ name: name })
+        const user = await User.findById(userId)
         // in the real project you to connect the user by req.user not by name 
         const result = await user.addToCart(product)
         res.status(200).json({ message: 'added to cart', user: result })
@@ -25,11 +26,11 @@ exports.postCart = async (req, res, next) => {
 
 }
 exports.removeCart = async (req, res, next) => {
-    const productId = req.params.body;
-    const name = req.body.name;
+    const productId = req.params.productId;
+    const userId = req.params.userId;
     try {
         const product = await Product.findById(productId)
-        const user = await User.findOne({ name: name })
+        const user = await User.findById(userId)
         const result = await user.removeFromCart(productId)
         res.status(200).json({ message: 'product deleted' })
     }
@@ -41,9 +42,9 @@ exports.removeCart = async (req, res, next) => {
     }
 }
 exports.postOrder = async (req, res, next) => {
-    const name  =  req.body.name;
+    const userId = req.params.userId;
     try{
-        const user = await User.findOne({name:name})
+        const user = await User.findById(userId)
        
         const users = await user.populate('cart.items.productId').execPopulate()
         
@@ -91,9 +92,9 @@ exports.getWishlist = async(req,res,next)=>{
 }
 exports.postwishlist = async(req,res,next)=>{
     const productId = req.params.productId;
-    const name = req.body.name;
+    const userId = req.params.userId;
     try{
-        const user = await User.findOne({name:name})
+        const user = await User.findById(userId)
         const product = await Product.findById(productId)
         const result = await user.addToWishlist(product)
         res.status(200).json({message:'added to wishlist'})
@@ -108,9 +109,9 @@ exports.postwishlist = async(req,res,next)=>{
 
 exports.removeWishlist = async(req,res,next)=>{
     const productId = req.params.productId;
-    const name = req.body.name;
+    const userId = req.params.userId;
     try{
-        const user = await User.findOne({name:name})
+        const user = await User.findById(userId)
         const product = await User.findById(productId)
         const result = await user.removeWishlist(productId)
         res.status(200).json({message:'deleted'})

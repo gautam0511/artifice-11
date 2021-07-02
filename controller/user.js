@@ -58,7 +58,7 @@ exports.postsignup = async (req, res, next) => {
             userId :user._id
         },
         'resetpasswordsecretpasswordartifice11',
-        {expiresIn:'30 min'}
+        { expiresIn:'10min'}
         )
         user.token.push(token)
         const resultUsers = await user.save()
@@ -99,30 +99,33 @@ exports.getlogin = async (req, res, next) => {
 exports.postLogin = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
-   
+  
     
     try {
-
-        if(email === 'artifice117@gmail.com' && password ==='artifice11' ){
+        
+       
+            if(email === 'artifice117@gmail.com' && password ==='artifice11' ){
             
-            res.json({message:'hello admin'})
-        }
-        else{
-            const user = await User.findOne({email:email})
-            if(!user){
-                const error = new Error('login failed')
-                error.statusCode = 422
-                throw error;
-            }
-            
-            const result = await bcrypt.compare(password,user.password)
-            if(result){
-                res.status(200).json({message:'welcome user'})
+                res.json({message:'hello admin'})
             }
             else{
-                res.status(401).json({message:'not exist'})
-            }
-        }           
+                const user = await User.findOne({email:email})
+                if(!user){
+                    const error = new Error('login failed')
+                    error.statusCode = 422
+                    throw error;
+                }
+                
+                const result = await bcrypt.compare(password,user.password)
+                if(result){
+                    res.status(200).json({message:'welcome user'})
+                }
+                else{
+                    res.status(401).json({message:'not exist'})
+                }
+            }        
+        
+           
     }
     catch (err) {
         if (!err.statusCode) {
@@ -132,13 +135,12 @@ exports.postLogin = async (req, res, next) => {
     }
 }
 
-
-
 exports.resetpassword = async(req,res,next)=>{
+  
     const tokenId = req.params.token;
     const email = req.body.email;
     const newpassword = req.body.newpassword;
-    
+   
     try{
         const user = await User.findOne({email:email})
         
@@ -147,6 +149,9 @@ exports.resetpassword = async(req,res,next)=>{
         user.password = hashedpassword;
         const result = await user.save()
         res.status(200).json({message:'updated'})
+        }
+        else{
+            console.log('wrong token')
         }
         
     }
