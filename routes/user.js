@@ -12,5 +12,6 @@ router.post('/signup',[
 router.post('/login',userController.postLogin);
 router.get('/login',userController.getlogin);
 router.post('/reset/:token',userController.resetpassword);
+router.delete('/logout/:userId',userController.logout);
 
 module.exports = router;

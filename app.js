@@ -1,4 +1,4 @@
-const http = require('http');
+
 require('dotenv').config()
 const path = require('path');
 const express = require('express');
@@ -8,30 +8,30 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const {v4:uuidv4} = require('uuid');
 app.use(bodyParser.json())
-const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.igetc.mongodb.net/${process.env.MONGO_DATABASE}?retryWrites=true&w=majority`
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.kutbe.mongodb.net/${process.env.MONGO_DATABASE}?retryWrites=true&w=majority`
+//image uploader pending
+// app.use('/images',express.static(path.join(__dirname,'images')));
 
-app.use('/images',express.static(path.join(__dirname,'images')));
+// const fileStorage = multer.diskStorage({
+//     destination:function(req,file,cb){
+//         cb(null,'images')
+//     },
+//     filename:function(req,file,cb){
+//         cb(null,uudiv4())
+//     }
+// })
 
-const fileStorage = multer.diskStorage({
-    destination:function(req,file,cb){
-        cb(null,'images')
-    },
-    filename:function(req,file,cb){
-        cb(null,uudiv4())
-    }
-})
+// const fileFilter= (req,file,cb)=>{
+//     if(file.mimetype === 'images/png' || file.mimetype === 'images/jpg' || file.mimetype === 'images/jpeg'){
+//         cb(null,true)
+//     }
+//     else{
+//         cb(null,false)
+//     }
 
-const fileFilter= (req,file,cb)=>{
-    if(file.mimetype === 'images/png' || file.mimetype === 'images/jpg' || file.mimetype === 'images/jpeg'){
-        cb(null,true)
-    }
-    else{
-        cb(null,false)
-    }
+// }
 
-}
-
-app.use(multer({storage:fileStorage,fileFilter:fileFilter}).single('image'))
+// app.use(multer({storage:fileStorage,fileFilter:fileFilter}).single('image'))
 const userRoutes =  require('./routes/user');
 const productRoutes = require('./routes/product');
 const cartRoutes = require('./routes/cart');
